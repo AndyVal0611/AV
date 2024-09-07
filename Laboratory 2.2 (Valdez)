@@ -1,0 +1,60 @@
+#initialize the variables
+net_income = 0
+gross_income = 0
+total_deduction = 0
+name_of_employee = " "
+department = " "
+number_of_hours_per_day = 0
+number_of_days_per_week = 0
+number_of_weeks_per_month = 0
+
+#input employee's name and department
+name_of_employee = (input("enter employee's name:"))
+department = (input("enter employee's department:"))
+
+#input the rate per hour, number of hours per day, days per week, weeks per month
+rate_per_hour = float(input("enter the employee's rate per hour:"))
+number_of_hours_per_day = float(input("enter the employee's number of hours per day:"))
+number_of_days_per_week = float(input("enter the employee's number of days per week:"))
+number_of_weeks_per_month = float(input("enter the employee's weeks per month:"))
+
+#calculate the gross income
+gross_income = number_of_hours_per_day * number_of_days_per_week * number_of_weeks_per_month * rate_per_hour
+
+#initialize SSS, Philhealth, and Pagibig contribution
+sss_contribution = 0
+philhealth_contribution = 0
+pagibig_contribution = 100
+
+#determine the Philhealth and SSS contribution
+def sss_contribution(gross_income):
+    if gross_income <= 20000:
+        return 125.75
+    elif 20001 <= gross_income <= 50000:
+        return 2200.50
+    elif 50001 <= gross_income <= 75000:
+        return 4800.00
+    else:
+        return 5800.00
+def philhealth_contribution(gross_income):
+    if gross_income <= 20000:
+        return 100.00
+    elif 20001 <= gross_income <= 50000:
+        return 1200.00
+    elif 50001 <= gross_income <= 75000:
+        return 6800.00
+    else:
+        return 8800.00
+
+#compute the total deduction
+total_deduction = sss_contribution(gross_income) + pagibig_contribution + philhealth_contribution(gross_income)
+
+#compute the net income
+net_income = gross_income - total_deduction
+
+#display the computed value
+print("department:", department)
+print("employee's name:", name_of_employee)
+print("net income:", net_income)
+print("gross income:", gross_income)
+print("total deduction:", total_deduction)
