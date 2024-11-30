@@ -5,8 +5,8 @@
 #define LOW_STOCK_THRESHOLD 5
 
 struct Product {
-    char name[50];  // Allow longer names
-    char type[50];  // Allow longer types
+    char name[50];  // For longer names
+    char type[50];  // For longer types
     int quantity;
     float price;
     struct Product* next;
@@ -32,7 +32,7 @@ void addProduct() {
     printf("Enter product price: ");
     char priceInput[20];
     scanf("%s", priceInput);
-    sscanf(priceInput + 1, "%f", &newProduct->price); // Parse price after the "P"
+    sscanf(priceInput + 1, "%f", &newProduct->price); // Parse price after the "P for Philippine Peso
 
     newProduct->next = head;
     head = newProduct;
@@ -61,7 +61,7 @@ void updateProduct() {
             printf("Enter new price: ");
             char priceInput[20];
             scanf("%s", priceInput);
-            sscanf(priceInput + 1, "%f", &current->price); // Parse price after the "P"
+            sscanf(priceInput + 1, "%f", &current->price); // Parse price after the "P" for Philippine Peso
 
             printf("Product updated successfully!\n");
             return;
@@ -127,7 +127,7 @@ void processSale() {
     printf("Product not found!\n");
 }
 
-void generateReport() {
+void generateReport() { // Output for Inventory Report
     struct Product* current = head;
 
     printf("\n\t\t\t\t        Inventory Report\t\t\t\t\n");
@@ -162,7 +162,7 @@ void checkLowStock() {
 
 // Function to clear the screen
 void clearScreen() {
-    system("clear");  // This will work on Linux-based systems like OnlineGDB
+    system("clear");
 }
 
 int main() {
@@ -175,7 +175,7 @@ int main() {
         printf("4. Process Sale\n");
         printf("5. Generate Report\n");
         printf("6. Check Low Stock\n");
-        printf("7. Clear Screen\n"); // Added Clear Screen option
+        printf("7. Clear Screen\n"); // Adding Clear Screen option
         printf("8. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
@@ -200,7 +200,7 @@ int main() {
                 checkLowStock();
                 break;
             case 7:
-                clearScreen(); // Calls clear screen function
+                clearScreen(); // Calling for clear screen function
                 break;
             case 8:
                 printf("Program Exit.\n");
