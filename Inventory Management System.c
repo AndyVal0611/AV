@@ -51,13 +51,21 @@ void updateProduct() {
 
     while (current != NULL) {
         if (strcmp(current->name, name) == 0) {
+            // Ask for the new product name
+            printf("Enter new product name: ");
+            fgets(current->name, 50, stdin);
+            current->name[strcspn(current->name, "\n")] = 0; // Remove trailing newline
+
+            // Ask for the new product type
             printf("Enter new product type: ");
             fgets(current->type, 50, stdin);
             current->type[strcspn(current->type, "\n")] = 0; // Remove trailing newline
 
+            // Ask for the new quantity
             printf("Enter new quantity: ");
             scanf("%d", &current->quantity);
 
+            // Ask for the new price
             printf("Enter new price: ");
             char priceInput[20];
             scanf("%s", priceInput);
@@ -130,18 +138,18 @@ void processSale() {
 void generateReport() { // Output for Inventory Report
     struct Product* current = head;
 
-    printf("\n\t\t\t\t        Inventory Report\t\t\t\t\n");
-    printf("|===============================================================================================|\n");
-    printf(" %-25s %-25s %-18s %-20s\n", "Name", "Type", "Quantity", "Price");
-    printf("|-----------------------------------------------------------------------------------------------|\n");
+    printf("\n\t\t\t\t              AV Stationery Hub\t\t\t\t\n");
+    printf("|======================================================================================================================|\n");
+    printf(" %-40s %-32s %-19s %-29s\n", "Name", "Type", "Quantity", "Price");
+    printf("|----------------------------------------------------------------------------------------------------------------------|\n");
 
     while (current != NULL) {
-        printf(" %-25s %-25s %-18d P%-9.2f\n",
+        printf(" %-40s %-32s %-19d P%-9.2f\n",
                current->name, current->type, current->quantity, current->price);
         current = current->next;
     }
 
-    printf("|===============================================================================================|\n");
+    printf("|======================================================================================================================|\n");
 }
 
 void checkLowStock() {
@@ -168,7 +176,8 @@ void clearScreen() {
 int main() {
     int choice;
     do {
-        printf("\nInventory Management System\n");
+        printf("\n AV Stationery Hub\n");
+        printf("-------------------\n");
         printf("1. Add Product\n");
         printf("2. Update Product\n");
         printf("3. Delete Product\n");
