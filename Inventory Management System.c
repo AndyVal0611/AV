@@ -207,6 +207,43 @@ void generateReport() { // Output for Inventory Report
     printf("|=================================================================================================================================================|\n");
 }
 
+void checkLowStock() { // Listed products that are low stock
+    struct Product* current = head;
+    printf("\nLow Stock Check:\n");
+    int lowStockFound = 0; // Flag to check if any low stock is found
+
+    while (current != NULL) {
+        // Determine the stock status based on the minimum stock threshold
+        char stockStatus[20];
+        if (current->quantity == 0) {
+            strcpy(stockStatus, "Out of Stock");
+        } else if (current->quantity < current->minStockThreshold) {
+            strcpy(stockStatus, "Low Stock");
+        } else {
+            strcpy(stockStatus, "Enough Stock");
+        }
+
+        if (strcmp(stockStatus, "Low Stock") == 0 || strcmp(stockStatus, "Out of Stock") == 0) {
+            printf("Product '%s' (Type: %s) is %s (Quantity: %d, Min. Stock Threshold: %d)\n", 
+                   current->name, current->type, stockStatus, current->quantity, current->minStockThreshold);
+            lowStockFound = 1; // Set flag if low stock is found
+        }
+        current = current->next;
+    }
+
+    if (!lowStockFound) {
+        printf("No products are low on stock.\n");
+    }
+}
+
+void clearScreen() { // Function to clear the screen
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
+
 int main() { // Main menu and loop
     int choice;
     do {
@@ -240,10 +277,10 @@ int main() { // Main menu and loop
                 generateReport();
                 break;
             case 6:
-                // Checking low stock
+                checkLowStock(); // Calling checkLowStock function
                 break;
             case 7:
-                // Clearing the screen
+                clearScreen(); // Calling clearScreen function
                 break;
             case 8:
                 printf("Program Exit.\n");
