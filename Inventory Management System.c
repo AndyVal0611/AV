@@ -15,7 +15,7 @@ struct Product {
 
 struct Product* head = NULL;
 
-void addProduct() {
+void addProduct() { // Add a product
     struct Product* newProduct = (struct Product*)malloc(sizeof(struct Product));
 
     printf("Enter product name: ");
@@ -48,7 +48,7 @@ void toLowerCase(char* str) {
     }
 }
 
-void updateProduct() {
+void updateProduct() { // Update the product you want to modify
     char name[50];
     printf("Enter product name to update: ");
     getchar(); // To clear any leftover newline character
@@ -89,7 +89,7 @@ void updateProduct() {
     printf("Product not found!\n");
 }
 
-void deleteProduct() {
+void deleteProduct() { // Delete the product you want to exclude
     char name[50];
     printf("Enter product name to delete: ");
     getchar(); // To clear any leftover newline character
@@ -122,7 +122,7 @@ void deleteProduct() {
     printf("Product not found!\n");
 }
 
-void processSale() {
+void processSale() { // Entering the quantity to sell that is less than the original stock
     char name[50];
     int quantity;
 
@@ -158,11 +158,10 @@ void processSale() {
     printf("Product not found!\n");
 }
 
-
 void generateReport() { // Output for Inventory Report
     struct Product* current = head;
 
-    printf("\n\t\t\t\t              AV Paper n' Pixels\t\t\t\t\n");
+    printf("\n\t\t\t\t                   AV Paper n' Pixels\t\t\t\t\n");
     printf("|======================================================================================================================|\n");
     printf(" %-40s %-32s %-19s %-29s\n", "Name", "Type", "Quantity", "Price");
     printf("|----------------------------------------------------------------------------------------------------------------------|\n");
@@ -174,9 +173,8 @@ void generateReport() { // Output for Inventory Report
     }
 
     printf("|======================================================================================================================|\n");
-}
 
-void checkLowStock() {
+void checkLowStock() { // Listed products that are low stock
     struct Product* current = head;
     printf("\nLow Stock Alert (Threshold: %d):\n", LOW_STOCK_THRESHOLD);
     int lowStockFound = 0; // Flag to check if any low stock is found
@@ -196,12 +194,11 @@ void checkLowStock() {
     }
 }
 
-// Function to clear the screen
-void clearScreen() {
+void clearScreen() { // Function to clear the screen
     system("clear");
 }
 
-int main() {
+int main() { // Print the choices for AV Paper n' Pixels under IMS
     int choice;
     do {
         printf("\n AV Paper n' Pixels\n");
