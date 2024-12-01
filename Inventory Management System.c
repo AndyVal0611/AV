@@ -1,8 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h> // For detecting lower-case letters
 
-#define LOW_STOCK_THRESHOLD 5
+#define LOW_STOCK_THRESHOLD 35
 
 struct Product {
     char name[50];  // For longer names
@@ -40,36 +41,45 @@ void addProduct() {
     printf("Product added successfully!\n");
 }
 
+// Helper function to convert a string to lowercase (updateProduct, deleteProduct, processSale)
+void toLowerCase(char* str) {
+    for (int i = 0; str[i]; i++) {
+        str[i] = tolower(str[i]);
+    }
+}
+
 void updateProduct() {
     char name[50];
     printf("Enter product name to update: ");
     getchar(); // To clear any leftover newline character
     fgets(name, 50, stdin);
     name[strcspn(name, "\n")] = 0; // Remove trailing newline
+    toLowerCase(name); // Convert user input name to lowercase
 
     struct Product* current = head;
 
     while (current != NULL) {
-        if (strcmp(current->name, name) == 0) {
-            // Ask for the new product name
+        char productName[50];
+        strcpy(productName, current->name); // Copy product name to a temporary buffer
+        toLowerCase(productName); // Convert product name to lowercase
+
+        if (strcmp(productName, name) == 0) {
+            // Found the product, update it
             printf("Enter new product name: ");
             fgets(current->name, 50, stdin);
             current->name[strcspn(current->name, "\n")] = 0; // Remove trailing newline
 
-            // Ask for the new product type
             printf("Enter new product type: ");
             fgets(current->type, 50, stdin);
             current->type[strcspn(current->type, "\n")] = 0; // Remove trailing newline
 
-            // Ask for the new quantity
             printf("Enter new quantity: ");
             scanf("%d", &current->quantity);
 
-            // Ask for the new price
             printf("Enter new price: ");
             char priceInput[20];
             scanf("%s", priceInput);
-            sscanf(priceInput + 1, "%f", &current->price); // Parse price after the "P" for Philippine Peso
+            sscanf(priceInput + 1, "%f", &current->price); // Parse price after "P"
 
             printf("Product updated successfully!\n");
             return;
@@ -85,12 +95,18 @@ void deleteProduct() {
     getchar(); // To clear any leftover newline character
     fgets(name, 50, stdin);
     name[strcspn(name, "\n")] = 0; // Remove trailing newline
+    toLowerCase(name); // Convert user input name to lowercase
 
     struct Product* current = head;
     struct Product* previous = NULL;
 
     while (current != NULL) {
-        if (strcmp(current->name, name) == 0) {
+        char productName[50];
+        strcpy(productName, current->name); // Copy product name to a temporary buffer
+        toLowerCase(productName); // Convert product name to lowercase
+
+        if (strcmp(productName, name) == 0) {
+            // Found the product, delete it
             if (previous == NULL) {
                 head = current->next; // Delete the head
             } else {
@@ -109,10 +125,12 @@ void deleteProduct() {
 void processSale() {
     char name[50];
     int quantity;
+
     printf("Enter product name to sell: ");
     getchar(); // To clear any leftover newline character
     fgets(name, 50, stdin);
     name[strcspn(name, "\n")] = 0; // Remove trailing newline
+    toLowerCase(name); // Convert user input name to lowercase
 
     printf("Enter quantity to sell: ");
     scanf("%d", &quantity);
@@ -120,13 +138,18 @@ void processSale() {
     struct Product* current = head;
 
     while (current != NULL) {
-        if (strcmp(current->name, name) == 0) {
+        char productName[50];
+        strcpy(productName, current->name); // Copy product name to a temporary buffer
+        toLowerCase(productName); // Convert product name to lowercase
+
+        if (strcmp(productName, name) == 0) {
+            // Check for sufficient stock
             if (current->quantity >= quantity) {
                 current->quantity -= quantity;
-                printf("Sale processed successfully!\n");
+                printf("Sale processed successfully! Remaining stock for '%s': %d\n", current->name, current->quantity);
                 return;
             } else {
-                printf("Insufficient stock!\n");
+                printf("Insufficient stock for '%s'. Available quantity: %d\n", current->name, current->quantity);
                 return;
             }
         }
@@ -135,10 +158,11 @@ void processSale() {
     printf("Product not found!\n");
 }
 
+
 void generateReport() { // Output for Inventory Report
     struct Product* current = head;
 
-    printf("\n\t\t\t\t              AV Stationery Hub\t\t\t\t\n");
+    printf("\n\t\t\t\t              AV Paper n' Pixels\t\t\t\t\n");
     printf("|======================================================================================================================|\n");
     printf(" %-40s %-32s %-19s %-29s\n", "Name", "Type", "Quantity", "Price");
     printf("|----------------------------------------------------------------------------------------------------------------------|\n");
@@ -154,15 +178,19 @@ void generateReport() { // Output for Inventory Report
 
 void checkLowStock() {
     struct Product* current = head;
-    printf("\nLow Stock Alert:\n");
+    printf("\nLow Stock Alert (Threshold: %d):\n", LOW_STOCK_THRESHOLD);
     int lowStockFound = 0; // Flag to check if any low stock is found
+
     while (current != NULL) {
-        if (current->quantity < LOW_STOCK_THRESHOLD) {
-            printf("Product %s (Type: %s) is low on stock (Quantity: %d)\n", current->name, current->type, current->quantity);
+        // Check if the product's quantity is below the LOW_STOCK_THRESHOLD
+        if (current->quantity <= LOW_STOCK_THRESHOLD) {
+            // Print product details including name, type, and quantity
+            printf("Product '%s' (Type: %s) is low on stock (Quantity: %d)\n", current->name, current->type, current->quantity);
             lowStockFound = 1; // Set flag if low stock is found
         }
         current = current->next;
     }
+
     if (!lowStockFound) {
         printf("No products are low on stock.\n");
     }
@@ -176,8 +204,8 @@ void clearScreen() {
 int main() {
     int choice;
     do {
-        printf("\n AV Stationery Hub\n");
-        printf("-------------------\n");
+        printf("\n AV Paper n' Pixels\n");
+        printf("--------------------\n");
         printf("1. Add Product\n");
         printf("2. Update Product\n");
         printf("3. Delete Product\n");
