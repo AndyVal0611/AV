@@ -3,20 +3,24 @@
 #include <string.h>
 #include <ctype.h> // For detecting lower-case letters
 
-#define LOW_STOCK_THRESHOLD 35
-
 struct Product {
-    char name[50];  // For longer names
-    char type[50];  // For longer types
-    int quantity;
-    float price;
-    struct Product* next;
+    int id;                  // Product ID
+    char name[50];           // Product name
+    char type[50];           // Product type
+    int quantity;            // Product quantity
+    int minStockThreshold;   // Minimum stock threshold
+    float price;             // Product price
+    struct Product* next;    // Pointer to next product
 };
 
-struct Product* head = NULL;
+struct Product* head = NULL; // Head of the linked list of products
+static int idCounter = 1;    // Static to keep track of the ID across multiple function calls
 
 void addProduct() { // Add a product
     struct Product* newProduct = (struct Product*)malloc(sizeof(struct Product));
+
+    // Assigning an ID to each new product
+    newProduct->id = idCounter++;  // Always increment from the last assigned ID
 
     printf("Enter product name: ");
     getchar(); // To clear any leftover newline character
@@ -30,18 +34,32 @@ void addProduct() { // Add a product
     printf("Enter product quantity: ");
     scanf("%d", &newProduct->quantity);
 
+    printf("Enter minimum stock threshold: ");
+    scanf("%d", &newProduct->minStockThreshold);
+
     printf("Enter product price: ");
     char priceInput[20];
     scanf("%s", priceInput);
-    sscanf(priceInput + 1, "%f", &newProduct->price); // Parse price after the "P for Philippine Peso
+    sscanf(priceInput + 1, "%f", &newProduct->price); // Parse price after "P for Philippine Peso
 
-    newProduct->next = head;
-    head = newProduct;
+    // If the list is empty, make the new product the head
+    if (head == NULL) {
+        newProduct->next = NULL;
+        head = newProduct;
+    } else {
+        // Otherwise, find the last product in the list
+        struct Product* current = head;
+        while (current->next != NULL) {
+            current = current->next;
+        }
+        current->next = newProduct;
+        newProduct->next = NULL;  // New product should point to NULL
+    }
 
-    printf("Product added successfully!\n");
+    printf("Product added successfully! ID: %d\n", newProduct->id);
 }
 
-// Helper function to convert a string to lowercase (updateProduct, deleteProduct, processSale)
+// Helper function to convert a string to lowercase (used for searching)
 void toLowerCase(char* str) {
     for (int i = 0; str[i]; i++) {
         str[i] = tolower(str[i]);
@@ -75,6 +93,9 @@ void updateProduct() { // Update the product you want to modify
 
             printf("Enter new quantity: ");
             scanf("%d", &current->quantity);
+
+            printf("Enter new minimum stock threshold: ");
+            scanf("%d", &current->minStockThreshold);
 
             printf("Enter new price: ");
             char priceInput[20];
@@ -161,44 +182,32 @@ void processSale() { // Entering the quantity to sell that is less than the orig
 void generateReport() { // Output for Inventory Report
     struct Product* current = head;
 
-    printf("\n\t\t\t\t                   AV Paper n' Pixels\t\t\t\t\n");
-    printf("|======================================================================================================================|\n");
-    printf(" %-40s %-32s %-19s %-29s\n", "Name", "Type", "Quantity", "Price");
-    printf("|----------------------------------------------------------------------------------------------------------------------|\n");
+    printf("\n\t\t\t\t                                AV Paper n' Pixels\t\t\t\t\n");
+    printf("|=================================================================================================================================================|\n");
+    printf(" %-5s %-40s %-32s %-10s %-22s %-16s %-20s\n", "ID", "Name", "Type", "Quantity", "Min. Stock Threshold", "Price", "Stock Status");
+    printf("|-------------------------------------------------------------------------------------------------------------------------------------------------|\n");
 
     while (current != NULL) {
-        printf(" %-40s %-32s %-19d P%-9.2f\n",
-               current->name, current->type, current->quantity, current->price);
-        current = current->next;
-    }
-
-    printf("|======================================================================================================================|\n");
-
-void checkLowStock() { // Listed products that are low stock
-    struct Product* current = head;
-    printf("\nLow Stock Alert (Threshold: %d):\n", LOW_STOCK_THRESHOLD);
-    int lowStockFound = 0; // Flag to check if any low stock is found
-
-    while (current != NULL) {
-        // Check if the product's quantity is below the LOW_STOCK_THRESHOLD
-        if (current->quantity <= LOW_STOCK_THRESHOLD) {
-            // Print product details including name, type, and quantity
-            printf("Product '%s' (Type: %s) is low on stock (Quantity: %d)\n", current->name, current->type, current->quantity);
-            lowStockFound = 1; // Set flag if low stock is found
+        // Determine the stock status based on the comparison between quantity and minimum stock threshold
+        char stockStatus[20];
+        if (current->quantity == 0) {
+            strcpy(stockStatus, "Out of Stock");
+        } else if (current->quantity < current->minStockThreshold) {
+            strcpy(stockStatus, "Low Stock");
+        } else {
+            strcpy(stockStatus, "Enough Stock");
         }
+
+        // Adjusted width for Quantity, Min. Stock Threshold, Price, and Stock Status to align properly
+        printf(" %-5d %-40s %-32s %-10d %-22d P%-15.2f %-19s\n",
+               current->id, current->name, current->type, current->quantity, current->minStockThreshold, current->price, stockStatus);
         current = current->next;
     }
 
-    if (!lowStockFound) {
-        printf("No products are low on stock.\n");
-    }
+    printf("|=================================================================================================================================================|\n");
 }
 
-void clearScreen() { // Function to clear the screen
-    system("clear");
-}
-
-int main() { // Print the choices for AV Paper n' Pixels under IMS
+int main() { // Main menu and loop
     int choice;
     do {
         printf("\n AV Paper n' Pixels\n");
@@ -231,10 +240,10 @@ int main() { // Print the choices for AV Paper n' Pixels under IMS
                 generateReport();
                 break;
             case 6:
-                checkLowStock();
+                // Checking low stock
                 break;
             case 7:
-                clearScreen(); // Calling for clear screen function
+                // Clearing the screen
                 break;
             case 8:
                 printf("Program Exit.\n");
